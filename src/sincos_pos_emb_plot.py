@@ -22,15 +22,24 @@ def get_1d_sincos_pos_embed_from_grid(embed_dim, pos):
     return emb
 
 def main():
-    positions = 16
-    emb_dim = 64
+    positions = 128
+    emb_dim = 192
     pos = torch.arange(positions, dtype=torch.float32).reshape(1, 1, positions)
     emb = get_1d_sincos_pos_embed_from_grid(emb_dim, pos)
 
-    for i in range(positions):
-        half_emb_dim = int(emb_dim / 2)
-        plt.plot(range(half_emb_dim), emb[i, :half_emb_dim] + (i * 2))
-        plt.plot(range(half_emb_dim, emb_dim), emb[i, half_emb_dim:] + (i * 2))
+    # for i in range(positions):
+    #     half_emb_dim = int(emb_dim / 2)
+    #     plt.plot(range(half_emb_dim), emb[i, :half_emb_dim] + (i * 2))
+    #     plt.plot(range(half_emb_dim, emb_dim), emb[i, half_emb_dim:] + (i * 2))
+    # plt.ylabel("positions")
+    # plt.xlabel("dimensions")
+    # plt.show()
+    # plt.clf()
+
+    plt.imshow(emb)
+    plt.ylabel("position")
+    plt.xlabel("dimension")
+    plt.colorbar()
     plt.show()
 
     print("fin")
