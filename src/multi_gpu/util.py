@@ -17,6 +17,7 @@ class Model(nn.Module):
         self.main = nn.Sequential(*modules)
 
     def forward(self, x):
+        print(f"x.shape: {x.shape}")
         return self.main(x)
 
 def get_optim(model):
