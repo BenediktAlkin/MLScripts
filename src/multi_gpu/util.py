@@ -42,20 +42,20 @@ def train(model, optimizer, device=None, ds=None, rank=None):
     if rank is not None:
         sampler = get_dist_sampler()
         loader = tdata.DataLoader(ds, shuffle=False, batch_size=batch_size, drop_last=False, sampler=sampler)
+        set_epoch = sampler.set_epoch
     else:
         loader = tdata.DataLoader(ds, shuffle=True, batch_size=batch_size, drop_last=True)
-        sampler = object()
-        sampler.set_epoch = lambda _: None
+        set_epoch = lambda _: None
     print(f"{rank} loader_len={len(loader)}")
     #print(f"{rank} {next(model.parameters())}")
 
     for i in range(n_epochs):
-        sampler.set_epoch(i)
+        set_epoch(i)
         for j, x in enumerate(loader):
             if device is not None:
                 x = x.to(device)
             if i < 2:
-                print(f"{rank} x: {x}")
+                print(f"{rank} x: {[xi.item() for xi in x]}")
             if i == 0:
                 print(f"{rank} outer: {x.shape}")
                 y = model(x, verbose=True)
