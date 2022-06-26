@@ -18,22 +18,25 @@ class Model(nn.Module):
 
     def forward(self, x, verbose=False):
         if verbose:
-            print(f"x.shape: {x.shape}")
+            print(f"inner: {x.shape}")
         return self.main(x)
 
 def get_optim(model):
     return optim.SGD(model.parameters(), lr=0.1)
 
-def train(model, optimizer, device=None, only_single_batch=False):
+def train(model, optimizer, device=None):
     with open("workload.yaml") as f:
         cfg = yaml.safe_load(f)
     dims, batch_size, n_batches = cfg["dims"], cfg["batch_size"], cfg["n_batches"]
-    n_batches = 1 if only_single_batch else n_batches
-    for _ in range(n_batches):
+    for i in range(n_batches):
         x = torch.randn(batch_size, dims)
         if device is not None:
             x = x.to(device)
-        y = model(x)
+        if i == 0:
+            print(f"outer: {x.shape}")
+            y = model(x, verbose=True)
+        else:
+            y = model(x)
         model.zero_grad()
         y.mean().backward()
         optimizer.step()
