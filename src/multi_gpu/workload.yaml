@@ -1,0 +1,4 @@
+n_layers: 10
+dims: 100
+batch_size: 100
+n_batches: 100
