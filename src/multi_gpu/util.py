@@ -58,8 +58,9 @@ def train(model, optimizer, device=None, ds=None, rank=None):
             if i < 2:
                 print(f"{rank} x: {[xi.item() for xi in x]}")
             if i == 0:
-                print(f"{rank} outer: {x.shape}")
-                y = model(x, verbose=True)
+                #print(f"{rank} outer: {x.shape}")
+                #y = model(x, verbose=True)
+                y = model(x)
             else:
                 y = model(x)
             model.zero_grad()
