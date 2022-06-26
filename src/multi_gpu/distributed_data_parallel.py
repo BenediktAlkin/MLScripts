@@ -19,10 +19,9 @@ def main_mp(rank):
     device = torch.device(f"cuda:{rank}")
     model = model.to(device)
     model = nn.parallel.DistributedDataParallel(model, device_ids=[rank])
-    print(next(model.parameters()))
     optimizer = util.get_optim(model)
     with kp.Stopwatch() as sw:
-        util.train(model, optimizer, device=device)
+        util.train(model, optimizer, device=device, dist=True)
     print(sw.elapsed_seconds)
 
 
