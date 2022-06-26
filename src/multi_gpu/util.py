@@ -41,11 +41,12 @@ def train(model, optimizer, device=None, ds=None, rank=None):
     ds = ds or TestDataset(cfg)
     if rank is not None:
         sampler = get_dist_sampler()
-        # this drop_last ensures that every
+        # drop_last behavior:
+        # sampler.drop_last=False --> if a device would not receive the full batch_size a duplicate is sampled
         loader = tdata.DataLoader(ds, shuffle=False, batch_size=batch_size, drop_last=False, sampler=sampler)
         set_epoch = sampler.set_epoch
     else:
-        loader = tdata.DataLoader(ds, shuffle=True, batch_size=batch_size, drop_last=False)
+        loader = tdata.DataLoader(ds, shuffle=True, batch_size=batch_size, drop_last=True)
         set_epoch = lambda _: None
     print(f"{rank} loader_len={len(loader)}")
     #print(f"{rank} {next(model.parameters())}")
