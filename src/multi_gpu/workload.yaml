@@ -1,6 +1,6 @@
 n_layers: 100
-dims: 100
-batch_size: 1000
+dims: 1
+batch_size: 6
 
 n_epochs: 10
-n_batches: 1000
+n_batches: 3

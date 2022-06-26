@@ -1,6 +1,7 @@
+import os
+
 import torch.utils.data as tdata
 from ds import TestDataset
-import torch
 import torch.nn as nn
 import torch.optim as optim
 import yaml
@@ -46,13 +47,16 @@ def train(model, optimizer, device=None, ds=None, dist=False):
         sampler = object
         sampler.set_epoch = lambda _: None
 
+    rank = os.environ["RANK"]
     for i in range(n_epochs):
         sampler.set_epoch(i)
         for j, x in enumerate(loader):
             if device is not None:
                 x = x.to(device)
+            if i < 2:
+                print(f"{rank} x: {x}")
             if i == 0:
-                print(f"outer: {x.shape}")
+                print(f"{rank} outer: {x.shape}")
                 y = model(x, verbose=True)
             else:
                 y = model(x)
