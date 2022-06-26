@@ -21,7 +21,7 @@ def main_mp(rank):
     model = nn.parallel.DistributedDataParallel(model, device_ids=[rank])
     optimizer = util.get_optim(model)
     with kp.Stopwatch() as sw:
-        util.train(model, optimizer, device=device, dist=True)
+        util.train(model, optimizer, device=device, rank=rank)
     print(sw.elapsed_seconds)
 
 
