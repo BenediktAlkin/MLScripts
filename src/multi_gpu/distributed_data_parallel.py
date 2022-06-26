@@ -12,7 +12,7 @@ def main():
 
 def main_mp(rank):
     os.environ["MASTER_ADDR"] = "localhost"
-    os.environ["MASTER_PORT"] = "55555"
+    os.environ["MASTER_PORT"] = "55559"
     print(f"rank: {rank}")
     dist.init_process_group(backend="nccl", init_method='env://', world_size=4, rank=rank)
     model = util.Model()
