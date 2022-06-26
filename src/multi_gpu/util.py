@@ -1,3 +1,5 @@
+import torch.utils.data as tdata
+from ds import TestDataset
 import torch
 import torch.nn as nn
 import torch.optim as optim
@@ -24,19 +26,36 @@ class Model(nn.Module):
 def get_optim(model):
     return optim.SGD(model.parameters(), lr=0.1)
 
-def train(model, optimizer, device=None):
+def get_dist_sampler():
     with open("workload.yaml") as f:
         cfg = yaml.safe_load(f)
-    dims, batch_size, n_batches = cfg["dims"], cfg["batch_size"], cfg["n_batches"]
-    for i in range(n_batches):
-        x = torch.randn(batch_size, dims)
-        if device is not None:
-            x = x.to(device)
-        if i == 0:
-            print(f"outer: {x.shape}")
-            y = model(x, verbose=True)
-        else:
-            y = model(x)
-        model.zero_grad()
-        y.mean().backward()
-        optimizer.step()
+    ds = TestDataset(cfg)
+    sampler = tdata.distributed.DistributedSampler(ds, shuffle=True, drop_last=True)
+    return sampler
+
+def train(model, optimizer, device=None, ds=None, dist=False):
+    with open("workload.yaml") as f:
+        cfg = yaml.safe_load(f)
+    dims, batch_size, n_epochs = cfg["dims"], cfg["batch_size"], cfg["n_epochs"]
+    ds = ds or TestDataset(cfg)
+    if dist:
+        sampler = get_dist_sampler()
+        loader = tdata.DataLoader(ds, shuffle=False, batch_size=batch_size, drop_last=True, sampler=sampler)
+    else:
+        loader = tdata.DataLoader(ds, shuffle=True, batch_size=batch_size, drop_last=True)
+        sampler = object
+        sampler.set_epoch = lambda _: None
+
+    for i in range(n_epochs):
+        sampler.set_epoch(i)
+        for j, x in enumerate(loader):
+            if device is not None:
+                x = x.to(device)
+            if i == 0:
+                print(f"outer: {x.shape}")
+                y = model(x, verbose=True)
+            else:
+                y = model(x)
+            model.zero_grad()
+            y.mean().backward()
+            optimizer.step()
