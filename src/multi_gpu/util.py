@@ -31,7 +31,7 @@ def get_dist_sampler():
     with open("workload.yaml") as f:
         cfg = yaml.safe_load(f)
     ds = TestDataset(cfg)
-    sampler = tdata.distributed.DistributedSampler(ds, shuffle=True, drop_last=True)
+    sampler = tdata.distributed.DistributedSampler(ds, shuffle=True, drop_last=False)
     return sampler
 
 def train(model, optimizer, device=None, ds=None, rank=None):
@@ -41,10 +41,11 @@ def train(model, optimizer, device=None, ds=None, rank=None):
     ds = ds or TestDataset(cfg)
     if rank is not None:
         sampler = get_dist_sampler()
-        loader = tdata.DataLoader(ds, shuffle=False, batch_size=batch_size, drop_last=True, sampler=sampler)
+        # this drop_last ensures that every
+        loader = tdata.DataLoader(ds, shuffle=False, batch_size=batch_size, drop_last=False, sampler=sampler)
         set_epoch = sampler.set_epoch
     else:
-        loader = tdata.DataLoader(ds, shuffle=True, batch_size=batch_size, drop_last=True)
+        loader = tdata.DataLoader(ds, shuffle=True, batch_size=batch_size, drop_last=False)
         set_epoch = lambda _: None
     print(f"{rank} loader_len={len(loader)}")
     #print(f"{rank} {next(model.parameters())}")
