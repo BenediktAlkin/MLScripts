@@ -4,10 +4,11 @@ import util
 
 def main():
     model = util.Model()
-    model.to(torch.device("cuda:0"))
+    device = torch.device("cuda:0")
+    model.to(device)
     optimizer = util.get_optim(model)
     with kp.Stopwatch() as sw:
-        util.train(model, optimizer)
+        util.train(model, optimizer, device=device)
     print(sw.elapsed_seconds)
 
 

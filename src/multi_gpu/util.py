@@ -22,12 +22,14 @@ class Model(nn.Module):
 def get_optim(model):
     return optim.SGD(model.parameters(), lr=0.1)
 
-def train(model, optimizer):
+def train(model, optimizer, device=None):
     with open("workload.yaml") as f:
         cfg = yaml.safe_load(f)
     dims, batch_size, n_batches = cfg["dims"], cfg["batch_size"], cfg["n_batches"]
     for _ in range(n_batches):
         x = torch.randn(batch_size, dims)
+        if device is not None:
+            x = x.to(device)
         y = model(x)
         model.zero_grad()
         y.mean().backward()
