@@ -46,7 +46,7 @@ def train(model, optimizer, device=None, ds=None, rank=None):
         loader = tdata.DataLoader(ds, shuffle=True, batch_size=batch_size, drop_last=True)
         sampler = object()
         sampler.set_epoch = lambda _: None
-
+    print(f"{rank} loader_len={len(loader)}")
     #print(f"{rank} {next(model.parameters())}")
 
     for i in range(n_epochs):

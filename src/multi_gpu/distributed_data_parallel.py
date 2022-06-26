@@ -22,7 +22,7 @@ def main_mp(rank):
     optimizer = util.get_optim(model)
     with kp.Stopwatch() as sw:
         util.train(model, optimizer, device=device, rank=rank)
-    print(sw.elapsed_seconds)
+    print(f"{rank}: {sw.elapsed_seconds}")
 
 
 if __name__ == "__main__":
