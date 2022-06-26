@@ -1,4 +1,5 @@
 import kappaprofiler as kp
+import torch
 import torch.nn as nn
 import yaml
 import util
