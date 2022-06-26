@@ -41,7 +41,7 @@ def train(model, optimizer, device=None, ds=None, rank=None):
     ds = ds or TestDataset(cfg)
     if rank is not None:
         sampler = get_dist_sampler()
-        loader = tdata.DataLoader(ds, shuffle=False, batch_size=batch_size, drop_last=True, sampler=sampler)
+        loader = tdata.DataLoader(ds, shuffle=False, batch_size=batch_size, drop_last=False, sampler=sampler)
     else:
         loader = tdata.DataLoader(ds, shuffle=True, batch_size=batch_size, drop_last=True)
         sampler = object()
