@@ -8,7 +8,7 @@ def main():
 
 def main_impl(split):
     keep_percentage = 0.01
-    root = Path(f"C:/Users/Benedikt Alkin/Documents/data/ImageNet/{split}")
+    root = Path(f"C:/Users/Benedikt Alkin/Documents/data/ImageNetDebug/{split}")
     ds = ImageFolder(root)
     n_keep = int(len(ds) * keep_percentage)
     rng = np.random.default_rng(seed=5)
@@ -16,7 +16,7 @@ def main_impl(split):
     for idx in idxs_to_keep:
         src_path, _ = ds.samples[idx]
         src_path = Path(src_path).relative_to(root)
-        target_path = Path(f"{str(root.parent)}_{keep_percentage}") / src_path
+        target_path = Path(f"{str(root.parent)}_{keep_percentage}") / split / src_path
         target_path.parent.mkdir(exist_ok=True, parents=True)
         shutil.copyfile(root / src_path, target_path)
 
