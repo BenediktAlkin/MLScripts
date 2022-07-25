@@ -1,6 +1,7 @@
 import torch
 from torch.utils.data import DataLoader, DistributedSampler, Dataset
 from torch.multiprocessing import spawn
+import torch.distributed as dist
 
 
 class DummyDataset(Dataset):
@@ -18,13 +19,16 @@ def iterate(rank, loader):
     x = torch.cat([batch for batch in loader])
     x = [i.item() for i in x]
     print(f"{rank}: {x}")
+    gathered = [None for _ in dist.get_world_size()]
+    dist.gather(x, gathered)
+    gathered =torch.concat(gathered)
+    print(f"{rank} all: {gathered}")
 
 
 def main(rank):
     import os
     os.environ["MASTER_ADDR"] = "localhost"
     os.environ["MASTER_PORT"] = "55552"
-    import torch.distributed as dist
     dist.init_process_group(backend="nccl", init_method='env://', world_size=4, rank=rank)
     ds = DummyDataset(size=15)
     batch_size = 2
