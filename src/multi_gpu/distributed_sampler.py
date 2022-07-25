@@ -21,7 +21,7 @@ def iterate(rank, loader):
     gathered = [torch.zeros_like(x) for _ in range(dist.get_world_size())]
     dist.all_gather(gathered, x)
     gathered = torch.concat(gathered)
-    print(f"{rank} all: {gathered}")
+    print(f"{rank} all: {[i.item() for i in gathered]}")
 
 
 def main(rank):
