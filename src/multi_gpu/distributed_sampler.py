@@ -17,8 +17,7 @@ class DummyDataset(Dataset):
 
 def iterate(rank, loader):
     x = torch.cat([batch for batch in loader])
-    x = [i.item() for i in x]
-    print(f"{rank}: {x}")
+    print(f"{rank}: {[i.item() for i in x]}")
     gathered = [None for _ in range(dist.get_world_size())]
     dist.gather(x, gathered)
     gathered =torch.concat(gathered)
