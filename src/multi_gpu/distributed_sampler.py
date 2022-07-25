@@ -25,26 +25,27 @@ def main(rank):
     os.environ["MASTER_PORT"] = "55554"
     import torch.distributed as dist
     dist.init_process_group(backend="nccl", init_method='env://', world_size=4, rank=rank)
-    ds = DummyDataset(size=1001)
+    ds = DummyDataset(size=9)
+    batch_size = 2
 
     dist.barrier()
     if rank == 0: print("sampler=None drop_last=True")
-    iterate(rank, DataLoader(ds, batch_size=128, sampler=None, drop_last=True))
+    iterate(rank, DataLoader(ds, batch_size=batch_size, sampler=None, drop_last=True))
     dist.barrier()
     if rank == 0: print("sampler=None drop_last=False")
-    iterate(rank, DataLoader(ds, batch_size=128, sampler=None, drop_last=False))
+    iterate(rank, DataLoader(ds, batch_size=batch_size, sampler=None, drop_last=False))
     dist.barrier()
     if rank == 0: print("sampler=(drop_last=False) drop_last=False")
-    iterate(rank, DataLoader(ds, batch_size=128, sampler=DistributedSampler(ds, drop_last=False), drop_last=False))
+    iterate(rank, DataLoader(ds, batch_size=batch_size, sampler=DistributedSampler(ds, drop_last=False), drop_last=False))
     dist.barrier()
     if rank == 0: print("sampler=(drop_last=True) drop_last=False")
-    iterate(rank, DataLoader(ds, batch_size=128, sampler=DistributedSampler(ds, drop_last=True), drop_last=False))
+    iterate(rank, DataLoader(ds, batch_size=batch_size, sampler=DistributedSampler(ds, drop_last=True), drop_last=False))
     dist.barrier()
     if rank == 0: print("sampler=(drop_last=False) drop_last=True")
-    iterate(rank, DataLoader(ds, batch_size=128, sampler=DistributedSampler(ds, drop_last=True), drop_last=True))
+    iterate(rank, DataLoader(ds, batch_size=batch_size, sampler=DistributedSampler(ds, drop_last=True), drop_last=True))
     dist.barrier()
     if rank == 0: print("sampler=(drop_last=True) drop_last=True")
-    iterate(rank, DataLoader(ds, batch_size=128, sampler=DistributedSampler(ds, drop_last=True), drop_last=True))
+    iterate(rank, DataLoader(ds, batch_size=batch_size, sampler=DistributedSampler(ds, drop_last=True), drop_last=True))
     dist.barrier()
 
 if __name__ == "__main__":
