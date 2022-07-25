@@ -1,3 +1,4 @@
+import einops
 import torch
 from torch.utils.data import DataLoader, DistributedSampler, Dataset
 from torch.multiprocessing import spawn
@@ -20,8 +21,12 @@ def iterate(rank, loader):
     print(f"{rank}: {[i.item() for i in x]}")
     gathered = [torch.zeros_like(x) for _ in range(dist.get_world_size())]
     dist.all_gather(gathered, x)
+    # by default gathered is ordered by gpu, but samples are split round-robin
+    # e.g. [0,1,2,3] with 2 gpus would be split into gpu0=[0,2] gpu1=[1,3] so concating would result in [0,2,1,3]
     gathered = torch.concat(gathered)
     print(f"{rank} all: {[i.item() for i in gathered]}")
+    ordered = einops.rearrange(gathered, "(a b) -> (b a)", a=len(x))
+    print(f"{rank} all ordered: {[i.item() for i in ordered]}")
 
 
 def main(rank):
