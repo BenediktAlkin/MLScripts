@@ -26,7 +26,7 @@ def main(rank):
     os.environ["MASTER_PORT"] = "55554"
     import torch.distributed as dist
     dist.init_process_group(backend="nccl", init_method='env://', world_size=4, rank=rank)
-    ds = DummyDataset(size=9)
+    ds = DummyDataset(size=15)
     batch_size = 2
 
     dist.barrier()
