@@ -25,7 +25,7 @@ def iterate(rank, loader):
     # e.g. [0,1,2,3] with 2 gpus would be split into gpu0=[0,2] gpu1=[1,3] so concating would result in [0,2,1,3]
     gathered = torch.concat(gathered)
     print(f"{rank} all: {[i.item() for i in gathered]}")
-    ordered = einops.rearrange(gathered, "(x_size n_gpus) -> (x_size n_gpus)", x_size=len(x))
+    ordered = einops.rearrange(gathered, "(x_size n_gpus) -> (n_gpus x_size)", x_size=len(x))
     print(f"{rank} all ordered: {[i.item() for i in ordered]}")
 
 
