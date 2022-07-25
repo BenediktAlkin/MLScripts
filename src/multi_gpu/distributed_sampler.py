@@ -26,9 +26,17 @@ def main(rank):
     os.environ["MASTER_PORT"] = "55554"
     import torch.distributed as dist
     dist.init_process_group(backend="nccl", init_method='env://', world_size=4, rank=rank)
-    ds = DummyDataset(size=15)
-    batch_size = 2
 
+    for size, batch_size in [
+        (15, 2),
+        (16, 16),
+    ]:
+        if rank == 0:
+            print(f"size={size} batch_size={batch_size}")
+            all_possiblities(rank, size, batch_size)
+
+def all_possiblities(rank, size, batch_size):
+    ds = DummyDataset(size=size)
     dist.barrier()
     if rank == 0: print("sampler=None drop_last=True")
     iterate(rank, DataLoader(ds, batch_size=batch_size, sampler=None, drop_last=True))
