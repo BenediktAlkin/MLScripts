@@ -33,7 +33,7 @@ def main(rank):
     ]:
         if rank == 0:
             print(f"size={size} batch_size={batch_size}")
-            all_possiblities(rank, size, batch_size)
+        all_possiblities(rank, size, batch_size)
 
 def all_possiblities(rank, size, batch_size):
     ds = DummyDataset(size=size)
