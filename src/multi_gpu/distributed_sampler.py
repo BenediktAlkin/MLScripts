@@ -23,7 +23,7 @@ def iterate(rank, loader):
 def main(rank):
     import os
     os.environ["MASTER_ADDR"] = "localhost"
-    os.environ["MASTER_PORT"] = "55554"
+    os.environ["MASTER_PORT"] = "55552"
     import torch.distributed as dist
     dist.init_process_group(backend="nccl", init_method='env://', world_size=4, rank=rank)
     ds = DummyDataset(size=15)
