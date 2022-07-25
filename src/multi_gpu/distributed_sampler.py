@@ -17,7 +17,7 @@ class DummyDataset(Dataset):
         return idx
 
 def iterate(rank, loader):
-    x = torch.cat([batch for batch in loader])#.to(torch.device(f"cuda:{rank}"))
+    x = torch.cat([batch for batch in loader]).to(torch.device(f"cuda:{rank}"))
     print(f"{rank}: {[i.item() for i in x]}")
     gathered = [torch.zeros_like(x)] * dist.get_world_size()
     dist.all_gather(gathered, x)
