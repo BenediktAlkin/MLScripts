@@ -15,8 +15,9 @@ class DummyDataset(Dataset):
         return idx
 
 def iterate(rank, loader):
-    batches = torch.cat([batch for batch in loader])
-    print(f"{rank}: {list(batches)}")
+    x = torch.cat([batch for batch in loader])
+    x = [i.item() for i in x]
+    print(f"{rank}: {x}")
 
 
 def main(rank):
