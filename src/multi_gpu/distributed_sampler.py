@@ -1,3 +1,4 @@
+import torch.distributed as dist
 import torch
 from torch.utils.data import DataLoader, DistributedSampler, Dataset
 from torch.multiprocessing import spawn
@@ -24,7 +25,6 @@ def main(rank):
     import os
     os.environ["MASTER_ADDR"] = "localhost"
     os.environ["MASTER_PORT"] = "55554"
-    import torch.distributed as dist
     dist.init_process_group(backend="nccl", init_method='env://', world_size=4, rank=rank)
 
     for size, batch_size in [
