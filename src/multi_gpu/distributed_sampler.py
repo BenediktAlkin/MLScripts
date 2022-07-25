@@ -19,7 +19,7 @@ def iterate(rank, loader):
     x = torch.cat([batch for batch in loader])
     x = [i.item() for i in x]
     print(f"{rank}: {x}")
-    gathered = [None for _ in dist.get_world_size()]
+    gathered = [None for _ in range(dist.get_world_size())]
     dist.gather(x, gathered)
     gathered =torch.concat(gathered)
     print(f"{rank} all: {gathered}")
