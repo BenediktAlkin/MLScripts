@@ -17,9 +17,9 @@ class DummyDataset(Dataset):
         return idx
 
 def iterate(rank, loader):
-    x = torch.cat([batch for batch in loader]).to(torch.device(f"cuda:{rank}"))
+    x = torch.cat([batch for batch in loader])#.to(torch.device(f"cuda:{rank}"))
     print(f"{rank}: {[i.item() for i in x]}")
-    gathered = [torch.zeros_like(x) for _ in range(dist.get_world_size())]
+    gathered = [torch.zeros_like(x)] * dist.get_world_size()
     dist.all_gather(gathered, x)
     # by default gathered is ordered by gpu, but samples are split round-robin
     # e.g. [0,1,2,3] with 2 gpus would be split into gpu0=[0,2] gpu1=[1,3] so concating would result in [0,2,1,3]
