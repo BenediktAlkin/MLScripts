@@ -9,6 +9,7 @@ def main():
     scaler = torch.cuda.amp.GradScaler()
 
     x = torch.randn(5, 10)
+    x[0, 0] = float("inf")
     with torch.cuda.amp.autocast():
         y_hat = model(x)
         loss = loss_fn(y_hat, torch.randn_like(y_hat))
@@ -19,7 +20,10 @@ def main():
     print(model.weight)
     optim.zero_grad()
     scaled_loss.backward()
-    optim.step()
+    result = scaler.step(optim)
+    print(f"scaler.step: {result}")
+    #optim.step()
+    scaler.update()
     print(model.weight)
     print(model.weight.grad)
 
